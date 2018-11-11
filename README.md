@@ -1,7 +1,4 @@
 This is YouTube, 90s style.
 Thus it has a fitting name; RetroPlayr
 
-Features of old wesbites:
-slow
-disconnections from phone calls - dial up?
-
+We recommend firefox as chrome doesn't seem to work well with complex javascript. 
