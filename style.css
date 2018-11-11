@@ -102,24 +102,30 @@ div {
     position: absolute;
     right: 20px;
     bottom: 400px;
-    width: 200px;
+    width: 400px;
     height: 200px;
 }
 
 #ad2 {
     position: absolute;
     right: 20px;
-    bottom: 400px;
+    top: 150px;    
+    width: 400px;
+    height: 200px;
 }
 
 #ad3 {
     position: absolute;
-    right: 20px;
+    left: 400px;
     bottom: 400px;
+    width: 400px;
+    height: 200px;
 }
 
 #ad4 {
     position: absolute;
-    right: 20px;
-    bottom: 400px;
+    left: 400px;
+    top: 150px;
+    width: 400px;
+    height: 200px;
 }
