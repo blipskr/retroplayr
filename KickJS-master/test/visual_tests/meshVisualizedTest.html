@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+
+
+</head>
+<body>
+<a href="motion_camera.html">Next</a><br>
+<canvas id="canvas" style="border: none;" width="300" height="300"></canvas> <br>
+<script src="../../dependencies/require.js"></script>
+<script type="text/javascript">
+var req = require.config({
+    baseUrl: 'js/lib',
+    paths: {
+        kick: '../../../../src/js/kick'
+    }
+});
+
+req(['kick'],
+        function (kick) {
+            var engine;
+            var meshRenderer;
+
+            window.setMesh = function(url){
+                meshRenderer.mesh = new kick.mesh.Mesh({dataURI: url});
+                var meshData = meshRenderer.mesh.meshData;
+                meshData.recalculateTangents();
+                meshData.recalculateNormals();
+                meshRenderer.mesh.meshData = meshData;
+            }
+
+            window.setMaterial = function(vertexShaderId, fragmentShaderId){
+                var vs = document.getElementById(vertexShaderId).value;
+                var fs = document.getElementById(fragmentShaderId).value;
+                var shader = new kick.material.Shader();
+                shader.errorLog = function(e){console.log(e);};
+                shader.vertexShaderSrc = vs;
+                shader.fragmentShaderSrc = fs;
+                shader.apply();
+                var missingAttributes = meshRenderer.mesh.verify(shader);
+                if (missingAttributes){
+                    log("Missing attributes in mesh "+JSON.stringify(missingAttributes));
+                    return;
+                }
+
+                meshRenderer.material = new kick.material.Material({
+                    name:"Some material",
+                    shader:shader
+                });
+            };
+
+            window.recalculateNormals = function(){
+                clearLog();
+                var mesh = meshRenderer.mesh,
+                        meshData = mesh.meshData;
+                meshData.recalculateNormals();
+                mesh.meshData = mesh;
+                mesh.updateData();
+            };
+
+            window.recalculateTangents = function(){
+                clearLog();
+                var mesh = meshRenderer.mesh,
+                        meshData = mesh.meshData;
+                meshData.recalculateTangents();
+                mesh.meshData = mesh;
+                mesh.updateData();
+            };
+
+            function initKick() {
+                engine = new kick.core.Engine('canvas',{
+                    enableDebugContext: true
+                });
+                var cameraObject = engine.activeScene.createGameObject();
+                cameraObject.transform.position = [0,0,1];
+                var camera = new kick.scene.Camera({
+                    clearColor: [0.5,1,1,1]
+                });
+                cameraObject.addComponent(camera);
+
+                var gameObject = engine.activeScene.createGameObject();
+                meshRenderer = new kick.scene.MeshRenderer();
+                setMesh("kickjs://mesh/cube/?length=0.5");
+                setMaterial('vertexShaderUV','fragmentShader');
+                gameObject.addComponent(meshRenderer);
+            }
+
+            initKick();
+            window.setMesh = setMesh;
+            window.setMaterial = setMaterial;
+            window.recalculateNormals = recalculateNormals;
+            window.recalculateTangents = recalculateTangents;
+        });
+</script>
+This example shows how vertex attributes can be visualized.
+<br>
+<b>Mesh</b><br>
+[<a href="#" onclick="setMesh('kickjs://mesh/plane/');">Plane</a>]
+[<a href="#" onclick="setMesh('kickjs://mesh/disc/');">Disc</a>]
+[<a href="#" onclick="setMesh('kickjs://mesh/triangle/');">Triangle</a>]
+[<a href="#" onclick="setMesh('kickjs://mesh/cube/?length=0.5');">Cube</a>]
+[<a href="#" onclick="setMesh('kickjs://mesh/uvsphere/');">UVsphere</a>]
+<br>
+<h2>Shaders:</h2>
+[<a href="#" onclick="setMaterial('vertexShaderUV','fragmentShader');">UV1</a>]
+[<a href="#" onclick="setMaterial('vertexShaderNormal','fragmentShader');">Normal</a>]
+[<a href="#" onclick="setMaterial('vertexShaderTangent','fragmentShader');">Tangent</a>]
+[<a href="#" onclick="setMaterial('vertexShaderColor','fragmentShader');">Color</a>]
+[<a href="#" onclick="setMaterial('vertexShaderBlack','fragmentShader');">Black</a>]
+
+<div id="example" class="yui3-skin-sam"></div>
+
+<div style="display:none;">
+    <textarea style="width:500px;height:150px;" id="vertexShaderUV">
+        attribute vec3 vertex;
+        attribute vec2 uv1;
+
+        varying vec3 vColor;
+
+        void main(void) {
+        gl_Position = vec4(vertex, 1.0);
+        vColor = vec3(uv1.x,uv1.y,0);
+        }
+    </textarea>
+    <textarea style="width:500px;height:150px;" id="vertexShaderNormal">
+        attribute vec3 vertex;
+        attribute vec3 normal;
+
+        varying vec3 vColor;
+
+        void main(void) {
+        gl_Position = vec4(vertex, 1.0);
+        vColor = normal*0.5+vec3(.5,.5,.5);
+        }
+    </textarea>
+    <textarea style="width:500px;height:150px;" id="vertexShaderTangent">
+        attribute vec3 vertex;
+        attribute vec4 tangent;
+
+        varying vec3 vColor;
+
+        void main(void) {
+        gl_Position = vec4(vertex, 1.0);
+        vColor = tangent.xyz*0.5+vec3(.5,.5,.5);
+        }
+    </textarea><textarea style="width:500px;height:150px;" id="vertexShaderColor">
+    attribute vec3 vertex;
+    attribute vec4 color;
+
+    varying vec3 vColor;
+
+    void main(void) {
+    gl_Position = vec4(vertex, 1.0);
+    vColor = color.xyz;
+    }
+</textarea>
+    <textarea style="width:500px;height:150px;" id="vertexShaderBlack">
+        attribute vec3 vertex;
+
+        varying vec3 vColor;
+
+        void main(void) {
+        gl_Position = vec4(vertex, 1.0);
+        vColor = vec3(0,0,0);
+        }
+    </textarea>
+
+    <textarea style="width:500px;height:150px;" id="fragmentShader">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        varying vec3 vColor;
+        void main(void)
+        {
+        gl_FragColor = vec4(vColor.x, vColor.y, vColor.z, 1.0);
+        }
+    </textarea>
+</div>
+<br/>
+</body>
+</html>

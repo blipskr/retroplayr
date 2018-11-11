@@ -1,0 +1,42 @@
+KickJS Release notes:
+
+0.5.5
+-
+
+0.5.4
+- Added componentType to component, which let you easily access components from their gameObject by their type.
+- Added animation system
+- Added canvasResized event to Engine (old canvas resize behavior is removed - note this change potential break code).
+- Improved context lost on textures
+- Fix picking bug
+- Add Graphics.RenderToTexture
+
+0.5.3
+- Implemented Observer pattern and refactored classes by introducing events (See kick.core.Observable)
+- Added Skybox
+
+0.5.2
+- Introduce common components (in kick.components)
+- Fixed problem with vertex array objects (WebGL extension) when updating mesh data
+- Improved performance of interleaving vertex data
+- Improved performance of AABB creation
+
+0.5.1
+- Updated to gl-matrix 2.1
+- Improved sub mesh rendering
+- Remove engine parameter from Shader.getPrecompiledSource()
+- Fix rare bug in MeshData.recomputeNormals()
+- Fix problem with renderOrder (which caused wrong render order)
+- Fix Problem with normals after tangent recompute
+- Add support for OES_vertex_array_object
+- Add support for point sprites
+
+0.5.0
+- Now all classes must be loaded using require.js (this replaces the KICK.namespace method).
+- kick.math is now based on gl-matrix 2.0 (note that parameters has different ordering - and out parameter is required)
+- Changed class names in math module to start with uppercase (e.g. from vec3 to Vec3)
+- Changed outer module to lowercase (was KICK is now kick)
+- Introduced static reference (singleton) to engine. The engine can be referenced through the static field
+  kick.core.Engine.instance (internally KickJS uses a private EngineSingleton class). Note that this has removed the
+  engine parameter from a lot of functions.
+- kick.core.ResourceTracker is now used very different - now mainly used internally when loading projects

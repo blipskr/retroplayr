@@ -1,0 +1,36 @@
+<html>
+<body>
+<script src="../src/js/constants.js"></script>
+<script src="../dependencies/build/replaceconstants.js"></script>
+<h1>Input</h1>
+<textarea id="sourceinput" style="width: 500px;height:200px">
+    function test(){
+   var x = asdf;
+   x.y.GL_CONTEXT_LOST_WEBGL = 123;
+   GL_CONTEXT_LOST_WEBGL;
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(c.GL_DEPTH_TEST);
+    gl.viewportWidth = canvas.width;
+    gl.viewportHeight = canvas.height;
+    gl.clear(c.GL_COLOR_BUFFER_BIT | c.GL_DEPTH_BUFFER_BIT);
+
+}
+</textarea>
+<h1>Output</h1>
+<textarea id="sourceoutput" style="width: 500px;height:200px"></textarea>
+<script>
+    var sourceinput = document.getElementById('sourceinput');
+    var sourceoutput = document.getElementById('sourceoutput');
+    function replace(){
+        var input = sourceinput.value;
+        var newValue = replaceConstants(KICK.core.Constants,input);
+        if (newValue !== sourceoutput.value){
+            sourceoutput.value = newValue;
+        }
+        setTimeout(replace,1000);
+    }
+    replace();
+</script>
+</body>
+</html>

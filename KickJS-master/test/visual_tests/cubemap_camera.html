@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<a href="defaultMaterialTest.html">Next</a><br>
+<br>
+<button onclick="setDefaultCubemap();">Set default cubemap</button><br>
+  <canvas id="canvas" style="border: none;" width="300" height="300"></canvas> <br>
+  This example shows how a cube is rotated.
+  <br>
+  <script data-main="cubemap_camera.js" src="../../dependencies/require.js"></script>
+  </div>
+
+  <div id="example" class="yui3-skin-sam"></div>
+
+  <div style="display:none;">
+  <textarea style="width:500px;height:150px;" id="vertexShaderColor">
+attribute vec3 vertex;
+attribute vec2 uv1;
+attribute vec3 normal;
+
+uniform mat4 _mvProj;
+uniform mat3 _norm;
+
+varying vec3 n;
+
+void main(void) {
+    gl_Position = _mvProj * vec4(vertex, 1.0);
+    n = normal;
+
+}
+  </textarea>
+  <textarea style="width:500px;height:150px;" id="fragmentShader">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform samplerCube skybox;
+varying vec3 n;
+
+void main(void)
+{
+    gl_FragColor = textureCube(skybox,n);
+
+}
+  </textarea>
+</div>
+  <br/>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset=UTF-8”>
+    <title>Kick.js | Particle Editor</title>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/combo?3.16.0/cssnormalize-context/cssnormalize-context-min.css&3.16.0/cssfonts/cssfonts-min.css&3.16.0/cssgrids/cssgrids-min.css&3.16.0/cssbase/cssbase-min.css&3.16.0/cssbutton/cssbutton-min.css">
+    <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.16.0/yui/yui-min.js"></script>
+
+    <style>
+        #glslEditor {
+            width: 65%;
+            height: 80%;
+        }
+
+        .hiddenPanel {
+            display: none;
+        }
+
+        .yui3-panel {
+            outline:none;
+        }
+
+        .yui3-panel-content .yui3-widget-hd {
+            font-weight:bold;
+        }
+
+        .yui3-panel-content .yui3-widget-bd {
+            padding:15px;
+        }
+        .yui3-panel-content label {
+            margin-right:30px;
+        }
+        .yui3-panel-content fieldset {
+            border:none;
+            padding:0;
+        }
+        .yui3-panel-content input[type="text"] {
+            border:none;
+            border:1px solid #ccc;
+            padding: 3px 7px;
+            -webkit-border-radius:2px;
+            -moz-border-radius:2px;
+            border-radius:2px;
+            font-size:100%;
+            width:200px;
+        }
+        
+        .yui3-console{
+            top:150px !important;
+        }
+    </style>
+    <link href='/style.css' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="../common/common.js"></script>
+</head>
+<body class="yui3-skin-sam" style="background-color: white;">
+<header>
+</header>
+<canvas id="canvas" style="border: none;" width="800" height="800"></canvas>
+<script type="text/javascript" src="/header.js"></script>
+<script type="text/javascript" src="../common/dat.gui.js"></script>
+<script data-main="js/particle_system.js" type="text/javascript" src="../../dependencies/require.js"></script>
+</body>
+</html>

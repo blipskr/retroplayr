@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+
+
+    <!-- allows to use random seed
+// seedrandom.js version 2.0.
+// Author: David Bau 4/2/2011
+//
+// Defines a method Math.seedrandom() that, when called, substitutes
+// an explicitly seeded RC4-based algorithm for Math.random().  Also
+// supports automatic seeding from local or network sources of entropy.
+//
+// Usage:
+//
+//   <script src=http://davidbau.com/encode/seedrandom-min.js>
+//-->
+    <script src=seedrandom-min.js></script>
+
+</head>
+<body>
+<canvas id="canvas" style="border: none;" width="300" height="300"></canvas> <br>
+This example shows how a cube is rotated.
+<br>
+<script src="../../dependencies/require.js"></script>
+<script type="text/javascript">
+    var req = require.config({
+        baseUrl: 'js/lib',
+        paths: {
+            kick: '../../../../build/kick'
+        }
+    });
+
+    req(['kick'],
+            function (KICK) {
+                "use strict";
+                var engine;
+                var meshRenderer;
+                Math.seedrandom("hello");
+
+                var log = function (output) {
+                    var element = document.getElementById("output");
+                    element.innerHTML = element.innerHTML+output+"<br>";
+                };
+
+                var clearLog = function(){
+                    var element = document.getElementById("output");
+                    element.innerHTML = "";
+                };
+
+                var shader;
+
+                function setMaterial(vertexShaderId, fragmentShaderId){
+                    clearLog();
+                    var vs = document.getElementById(vertexShaderId).value;
+                    var fs = document.getElementById(fragmentShaderId).value;
+                    if (!shader){
+                        shader = new KICK.material.Shader();
+                        shader.vertexShaderSrc = vs;
+                        shader.fragmentShaderSrc = fs;
+                        shader.errorLog = log;
+                        shader.apply();
+                        var missingAttributes = meshRenderer.mesh.verify(shader);
+                        if (missingAttributes){
+                            log("Missing attributes in mesh "+JSON.stringify(missingAttributes));
+                            return;
+                        }
+                    }
+                    meshRenderer.material = new KICK.material.Material({
+                        name:"Some material",
+                        shader:shader
+                    });
+                }
+                var transforms = [];
+                function addObject(pos){
+                    var gameObject = engine.activeScene.createGameObject(),
+                            transform = gameObject.transform;
+                    meshRenderer = new KICK.scene.MeshRenderer();
+                    meshRenderer.mesh = engine.project.load(engine.project.ENGINE_MESH_CUBE);
+                    setMaterial('vertexShaderColor','fragmentShader');
+                    gameObject.addComponent(meshRenderer);
+                    transform.localScale = [0.8*Math.random(),0.8*Math.random(),0.8*Math.random()];
+                    transform.localRotationEuler = [360*Math.random(),360*Math.random(),360*Math.random()];
+                    transform.localPosition = pos;
+                    transforms.push(transform);
+                }
+
+                function initKick() {
+                    engine = new KICK.core.Engine('canvas',{
+                        enableDebugContext: true
+                    });
+                    var cameraObject = engine.activeScene.createGameObject();
+                    var camera = new KICK.scene.Camera({
+                        clearColor: [0,0,0,1]
+                    });
+                    cameraObject.transform.localPosition = [0,0,10];
+                    cameraObject.addComponent(camera);
+                    var count = 0;
+                    for (var i=-1;i<=1;i+=0.05){
+                        for (var j=-1;j<=1;j+=0.05){
+                            addObject([i*10,j*10,0]);
+                            count++;
+                        }
+                    }
+                    console.log("Created "+count+" cubes");
+                }
+                window.flipQuat = function(){
+                    for (var j=0;j<transforms.length;j++){
+                        var t = transforms[j];
+                        var q = t.localRotation;
+                        for (var i=0;i<4;i++){
+                            q[i] *= -1;
+                        }
+                        t.localRotation = q;
+                    }
+                }
+                window.randomizeRotation = function(){
+                    for (var j=0;j<transforms.length;j++){
+                        var t = transforms[j];
+                        t.localRotationEuler = [360*Math.random(),360*Math.random(),360*Math.random()];
+                    }
+                }
+                initKick();
+            });
+</script>
+<h2>Output</h2>
+<div id="output" style="color: red;">
+</div>
+<h2>Show data</h2>
+<div id="example" class="yui3-skin-sam"></div>
+<button onclick="flipQuat();">Flip quaternions</button>
+<button onclick="randomizeRotation();">Randomize rotation</button>
+<div style="display:none;">
+    <textarea style="width:500px;height:150px;" id="vertexShaderColor">
+        attribute vec3 vertex;
+        attribute vec4 color;
+
+        uniform mat4 _mvProj;
+
+        varying vec3 vColor;
+
+        void main(void) {
+        gl_Position = _mvProj * vec4(vertex, 1.0);
+        vColor = color.xyz;
+        }
+    </textarea>
+    <textarea style="width:500px;height:150px;" id="fragmentShader">
+        precision highp float;
+
+        varying vec3 vColor;
+        void main(void)
+        {
+        gl_FragColor = vec4(vColor.x, vColor.y, vColor.z, 1.0);
+        }
+    </textarea>
+</div>
+<br/>
+</body>
+</html>

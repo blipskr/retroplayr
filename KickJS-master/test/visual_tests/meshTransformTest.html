@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>KickJS: Mesh Transform Test</title>
+
+</head>
+<body>
+<a href="meshVisualizedTest.html">Next</a><br>
+<canvas id="canvas" style="border: none;" width="300" height="300"></canvas> <br>
+<script src="../../dependencies/require.js"></script>
+<script type="text/javascript">
+    var req = require.config({
+        baseUrl: 'js/lib',
+        paths: {
+            kick: '../../../../src/js/kick'
+        }
+    });
+
+    req(['kick'],
+            function (KICK) {
+
+                var engine;
+
+                var mesh;
+                var material;
+
+                function createMaterial(vertexShaderId, fragmentShaderId){
+                    var vs = document.getElementById(vertexShaderId).value;
+                    var fs = document.getElementById(fragmentShaderId).value;
+                    var shader = new KICK.material.Shader();
+                    shader.vertexShaderSrc = vs;
+                    shader.fragmentShaderSrc = fs;
+                    shader.errorLog = function(e){console.log(e);};
+                    shader.apply();
+                    return new KICK.material.Material({
+                        name:"Some material",
+                        shader:shader
+                    });
+                }
+
+                function addRotatorComponent(gameObject){
+                    var time = engine.time,
+                            transform = gameObject.transform,
+                            rotationSpeed = 0.05,
+                            rotation = transform.localRotationEuler;
+                    gameObject.addComponent({
+                        update: function(){
+                            rotation[1] += time.deltaTime*rotationSpeed;
+                            transform.localRotationEuler = rotation;
+                        }
+                    });
+                }
+
+                function addCube(parent){
+                    var gameObject = engine.activeScene.createGameObject();
+                    var meshRenderer = new KICK.scene.MeshRenderer();
+                    meshRenderer.mesh = mesh;
+                    meshRenderer.material = material;
+                    gameObject.addComponent(meshRenderer);
+                    addRotatorComponent(gameObject);
+                    if (parent){
+                        gameObject.transform.parent = parent;
+                        gameObject.transform.localPosition = [0,1.2,0];
+                    } else {
+                        gameObject.transform.localPosition = [0,-5,0];
+                    }
+
+                    return gameObject.transform;
+                }
+
+                function initKick() {
+                    engine = new KICK.core.Engine('canvas',{
+                        enableDebugContext: true
+                    });
+                    var cameraObject = engine.activeScene.createGameObject();
+                    var camera = new KICK.scene.Camera({
+                        clearColor: [0,0,0,1],
+                        perspective: false,
+                        near:-1,
+                        far:1,
+                        bottom:-10,
+                        top:10,
+                        left:-10,
+                        right:10
+                    });
+                    cameraObject.addComponent(camera);
+
+                    mesh = new KICK.mesh.Mesh({dataURI: "kickjs://mesh/cube/?length=0.5"});
+                    material = createMaterial('vertexShaderColor','fragmentShader');
+
+                    var transform = null;
+                    for (var i=0;i<5;i++){
+                        transform = addCube(transform);
+                    }
+                }
+                initKick();
+            });
+</script>
+
+This example shows how a cube is rotated.
+<br>
+
+<div id="example" class="yui3-skin-sam"></div>
+
+<div style="display:none;">
+    <textarea style="width:500px;height:150px;" id="vertexShaderColor">
+        attribute vec3 vertex;
+        attribute vec4 color;
+
+        uniform mat4 _mvProj;
+
+        varying vec3 vColor;
+
+        void main(void) {
+        gl_Position = _mvProj * vec4(vertex, 1.0);
+        vColor = color.xyz;
+        }
+    </textarea>
+    <textarea style="width:500px;height:150px;" id="fragmentShader">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        varying vec3 vColor;
+        void main(void)
+        {
+        gl_FragColor = vec4(vColor.x, vColor.y, vColor.z, 1.0);
+        }
+    </textarea>
+</div>
+<br/>
+</body>
+</html>

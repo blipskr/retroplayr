@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../src/js-dependencies/webgl-debug.js"></script>
+    <script type="text/javascript" src="../src/js/constants.js"></script>
+    <script type="text/javascript" src="../src/js/glslconstants.js"></script>
+    <script type="text/javascript" src="../src/js/core.js"></script>
+    <script type="text/javascript" src="../src/js/resource.js"></script>
+    <script type="text/javascript" src="../src/js/math.js"></script>
+    <script type="text/javascript" src="../src/js/mesh.js"></script>
+    <script type="text/javascript" src="../src/js/scene.js"></script>
+    <script type="text/javascript" src="../src/js/texture.js"></script>
+    <script type="text/javascript" src="../src/js/material.js"></script>
+    <script type="text/javascript">
+        var engine;
+
+        var log = function (output) {
+            var element = document.getElementById("output");
+            element.innerHTML = element.innerHTML+output+"<br>";
+        };
+
+        function runTest() {
+            var element = document.getElementById("output");
+            element.innerHTML = "";
+            var time = engine.time;
+            var gameObject = engine.activeScene.createGameObject();
+            var component = {
+                activated: function () {log("Component 1 activated(). Frame "+time.frame);},
+                update: function () {log("Component 1 update(). Frame "+time.frame);},
+                lateUpdate: function () {
+                    log("Component 1 lateUpdate(). Calling removeComponent. Frame "+time.frame);
+                    gameObject.removeComponent(this);
+                },
+                deactivated: function () {log("Component 1 deactivated(). Frame "+time.frame);},
+                render: function (gl) {log("Component 1 render(). Frame "+time.frame);}
+            };
+            gameObject.addComponent(component);
+        }
+
+        function runTestDestroyGameObject() {
+            var element = document.getElementById("output");
+            element.innerHTML = "";
+            var time = engine.time;
+            var gameObject = engine.activeScene.createGameObject();
+            var component = {
+                activated: function () {log("Component 1 activated(). Frame "+time.frame);},
+                update: function () {log("Component 1 update(). Frame "+time.frame);},
+                lateUpdate: function () {
+                    log("Component 1 lateUpdate(). Calling removeComponent. Frame "+time.frame);
+                    gameObject.destroy();
+                },
+                deactivated: function () {log("Component 1 deactivated(). Frame "+time.frame);},
+                render: function (gl) {log("Component 1 render(). Frame "+time.frame);}
+            };
+            gameObject.addComponent(component);
+        }
+
+        function runTestAB() {
+            runTest_AB(true);
+        }
+
+        function runTestBA() {
+            runTest_AB(false);
+        }
+        
+        function runTest_AB(isAB) {
+            var element = document.getElementById("output");
+            element.innerHTML = "";
+            var time = engine.time;
+            var gameObject = engine.activeScene.createGameObject();
+            var componentA = {
+                scriptPriority:1,
+                activated: function () {log("Component A activated(). Frame "+time.frame);},
+                update: function () {log("Component A update(). Frame "+time.frame);},
+                lateUpdate: function () {
+                    log("Component A lateUpdate(). Calling removeComponent. Frame "+time.frame);
+                    gameObject.removeComponent(this);
+                },
+                deactivated: function () {log("Component A deactivated(). Frame "+time.frame);},
+                render: function (gl) {log("Component A render(). Frame "+time.frame);}
+            };
+            var componentB = {
+                scriptPriority:2,
+                activated: function () {log("Component B activated(). Frame "+time.frame);},
+                update: function () {log("Component B update(). Frame "+time.frame);},
+                lateUpdate: function () {
+                    log("Component B lateUpdate(). Calling removeComponent. Frame "+time.frame);
+                    gameObject.removeComponent(this);
+                },
+                deactivated: function () {log("Component B deactivated(). Frame "+time.frame);},
+                render: function (gl) {log("Component B render(). Frame "+time.frame);}
+            };
+            if (isAB) {
+                gameObject.addComponent(componentA);
+                gameObject.addComponent(componentB);
+            } else {
+                gameObject.addComponent(componentB);
+                gameObject.addComponent(componentA);
+            }
+        }
+
+        function initKick() {
+            engine = new KICK.core.Engine('canvas',{
+                enableDebugContext: true
+            });
+            var cameraObject = engine.activeScene.createGameObject();
+            var camera = new KICK.scene.Camera({
+                clearColor: [0.5,1,1,1]
+            });
+            cameraObject.addComponent(camera);
+        }
+    </script>
+</head>
+<body onload="initKick();">
+  <canvas id="canvas" style="border: none;" width="300" height="300"></canvas> <br>
+  This simple test evaluates how component events are invoked during the lifetime of an object.<br>
+  In the AB test two components are inserted A and B, where B has a higher scriptPriority than A (meaning it should run first).<br>
+  Note the order is unspecified for render(), since this is not sorted by scriptPriority)<br>
+
+  [<a href="#" onclick="runTest();">Run test</a>]
+  [<a href="#" onclick="runTestAB();">Run test AB</a>]
+  [<a href="#" onclick="runTestBA();">Run test BA</a>]
+  [<a href="#" onclick="runTestDestroyGameObject();">Run test DestroyGameObject</a>]
+  <h2>Output</h2>
+  <div id="output">
+  </div>
+  <br/>
+</body>
+</html>

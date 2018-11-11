@@ -1,0 +1,418 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset=UTF-8”>
+    <title>Kick.js | Shader Editor</title>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/combo?3.16.0/cssnormalize-context/cssnormalize-context-min.css&3.16.0/cssfonts/cssfonts-min.css&3.16.0/cssgrids/cssgrids-min.css&3.16.0/cssbase/cssbase-min.css&3.16.0/cssbutton/cssbutton-min.css">
+    <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.16.0/yui/yui-min.js"></script>
+    <style>
+        #glslEditor {
+            width: 100%;
+            height: 400px;
+            position: relative !important;
+            border: 1px solid lightgray;
+            margin: auto;
+        }
+
+        .hiddenPanel {
+            display: none;
+        }
+
+        .yui3-panel {
+            outline:none;
+        }
+
+        .yui3-panel-content .yui3-widget-hd {
+            font-weight:bold;
+        }
+
+        .yui3-panel-content .yui3-widget-bd {
+            padding:15px;
+        }
+        .yui3-panel-content label {
+            margin-right:30px;
+        }
+        .yui3-panel-content fieldset {
+            border:none;
+            padding:0;
+        }
+        .yui3-panel-content input[type="text"] {
+            border:none;
+            border:1px solid #ccc;
+            padding: 3px 7px;
+            -webkit-border-radius:2px;
+            -moz-border-radius:2px;
+            border-radius:2px;
+            font-size:100%;
+            width:200px;
+        }
+
+        .yui3-console{
+            top:150px !important;
+        }
+    </style>
+    <link href='/style.css' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="../common/common.js"></script>
+</head>
+<body class="yui3-skin-sam" style="background-color: white;">
+<header>
+</header>
+
+<article id="menuAndContent">
+    <header id="ahead" style="float: right">
+        <h1 id="header" style="margin-top: 5px;padding-right:10px;"><a href="/">Kick.js</a> | Shader editor</h1>
+    </header>
+    <div id="menu" style="margin: 18px;">
+        <button id="resetShader" class='yui3-button'>New</button>
+        <button id="LoadButton" class='yui3-button'>Load</button>
+        <button id="SaveButton" class='yui3-button'>Save</button>
+        <button id="ExampleButton" class='yui3-button'>Examples</button>
+        &nbsp;|&nbsp;
+        <button id="ShareButton" title="Get the public url for this shader" class='yui3-button'>Share</button>
+        <button id="fullscreen" class='yui3-button'>Full screen</button>
+        &nbsp;|&nbsp;
+        <button id="LogoutButton" style="display: none;" class='yui3-button'>Logout</button>
+        <button id="LoginButton"  style="display: none;" title="Login using a Google Account. This allows you to load and save shaders." class='yui3-button'><img src="google_account.png"> Login</button>
+    </div>
+</article>
+<div class="yui3-g" id="layout" style="padding-left:320px;padding-right: 10px;">
+<div class="yui3-u" id="nav" style="margin-left:-310px; width:320px;">
+    <canvas id="canvas" style="border: none; margin-bottom: -300px; width: 300px; height: 300px;" width="300" height="300"></canvas>
+    <div id="logger" style="margin-top:300px;margin-bottom: -600px;"></div>
+</div>
+<div class="yui3-u" id="main" style="width:100%;">
+    <div id="mainEditor">
+        <div id="editorSection">
+            <ul>
+                <li><a href="#vs">Vertex shader</a></li>
+                <li><a href="#fs">Fragment shader</a></li>
+                <li><a href="#uniforms">Textures</a></li>
+                <li><a href="#textures">Uniforms</a></li>
+                <li><a href="#settings">Settings</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <div>
+                <div id="vs" class="sourceEditorPanel">
+                </div>
+                <div id="fs" class="sourceEditorPanel">
+                </div>
+                <div id="textures" class="sourceEditorPanel">
+                    <h3>Current textures</h3>
+                    <select multiple=true style="width:300px;height:100px;vertical-align:top;" id="currentTextures">
+                    </select>
+                    <button id="addTextureButton" title="Add new texture" class='yui3-button'>+</button>
+                    <button id="removeTextureButton" title="Delete selected texture" class='yui3-button'>-</button>
+
+                    <div id="textureDetails" style="width:300px;display: none;">
+                        <h3>Texture detail</h3>
+                        Texture source:<br>
+                        <input type="text" id="textureSrc" style="width:300px;"><br>
+                        Texture type [<a id="textureTypeInfo" style="font-weight: bold;color: blue;cursor: pointer;">?</a>]:
+                        <select id="textureType" style="float:right;">
+                            <option value="Texture2D">Texture 2D</option>
+                            <option value="CubeMap">Cube map</option>
+                        </select><br style="clear: both;">
+                        <br>
+                        Texture format:
+                        <select id="textureFormat" style="float:right;">
+                            <option value="Alpha">Alpha</option>
+                            <option value="RGB">RGB</option>
+                            <option value="RGBA">RGBA</option>
+                            <option value="Luminance">Luminance</option>
+                            <option value="Luminance alpha">Luminance alpha</option>
+                        </select><br style="clear: both;">
+                        Mip mapping: <span style="float:right;"><input type="checkbox" id="mipMapping"/>&nbsp;<label for="mipMapping" >Enabled</label></span><br style="clear: both;">
+                        Texture mode:
+                        <select id="textureMode" style="float:right;">
+                            <option value="Repeat">Repeat</option>
+                            <option value="Clamp">Clamp</option>
+                        </select><br style="clear: both;">
+                        Flip Y: <span style="float:right;"><input type="checkbox" id="flipY"/>&nbsp;<label for="flipY" >Enabled</label></span><br>
+                        Minification filter:
+                        <select id="minFilter" style="float:right;">
+                            <option value="Nearest">Nearest</option>
+                            <option value="Linear">Linear</option>
+                            <option value="Nearest mipmap nearest">Nearest mipmap nearest</option>
+                            <option value="Linear mipmap nearest">Linear mipmap nearest</option>
+                            <option value="Nearest mipmap linear">Nearest mipmap linear</option>
+                            <option value="Linear mipmap linear">Linear mipmap linear</option>
+                        </select><br style="clear: both;">
+                        Magnification filter:
+                        <select id="magFilter" style="float:right;">
+                            <option value="Nearest">Nearest</option>
+                            <option value="Linear">Linear</option>
+                        </select><br style="clear: both;">
+                        <br>
+                        <button id="updateTexture"  class='yui3-button'>Update</button>
+                        <br>
+                    </div>
+                    <div id="texturePreview" style="width:300px;display: none;">
+                        <h2>Preview</h2>
+                        <div id="texturePreviewPanel" style="width: 300px;height:200px;overflow: scroll;">
+                            <img id="texturePreviewImg" src="">
+                        </div>
+                    </div>
+                </div>
+                <div id="uniforms"  class="sourceEditorPanel">
+                    <h3>Current uniforms</h3>
+                    <select multiple=true style="width:300px;height:100px;vertical-align:top;" id="currentUniforms">
+                    </select>
+                    <div id="uniformDetail">
+                        <h4>Uniform details:</h4>
+                        Name:<br>
+                        <input type="text" id="uniformName" readonly=readonly><br>
+                        Type:<br>
+                        <input type="text" id="uniformType" readonly=readonly><br>
+                        Size:<br>
+                        <input type="text" id="uniformSize" readonly=readonly title="Length of uniform array or 1 if not array"><br>
+                        Value:<br>
+                        <div id="uniform_group_autobound">
+                            Auto bound by game engine<br>
+                        </div>
+                        <div id="uniform_group_number">
+                            <input id="uniform_0" style="width: 75px;"><input id="uniform_4" style="width: 75px;"><input id="uniform_8" style="width: 75px;"><input id="uniform_12" style="width: 75px;"><br>
+                            <input id="uniform_1" style="width: 75px;"><input id="uniform_5" style="width: 75px;"><input id="uniform_9" style="width: 75px;"><input id="uniform_13" style="width: 75px;"><br>
+                            <input id="uniform_2" style="width: 75px;"><input id="uniform_6" style="width: 75px;"><input id="uniform_10" style="width: 75px;"><input id="uniform_14" style="width: 75px;"><br>
+                            <input id="uniform_3" style="width: 75px;"><input id="uniform_7" style="width: 75px;"><input id="uniform_11" style="width: 75px;"><input id="uniform_15" style="width: 75px;"><br>
+                            <button id="uniform_number_update"  class='yui3-button'>Update</button>
+                        </div>
+                        <div id="uniform_group_sampler">
+                            <select id="uniform_sampler"></select><br>
+                            <button id="uniform_sampler_update" class='yui3-button'>Update</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="settings"  class="sourceEditorPanel">
+                    <h3>Mesh</h3>
+                    <div id="meshsetting">
+                        <!--<input type="radio" name="mesh-settings" id="cube" value="cube"><label for="cube"> Cube</label></option><br>-->
+                        <!--<input type="radio" name="mesh-settings" id="sphere" value="sphere" checked><label for="sphere"> Sphere</label></option><br>-->
+                        <!--<input type="radio" name="mesh-settings" id="plane"  value="plane"><label for="plane"> Plane</label></option><br>-->
+                        <!--<input type="radio" name="mesh-settings" id="teapot" value="teapot"><label for="teapot"> Teapot</label></option><br>-->
+                        <!--<input type="radio" name="mesh-settings" id="head" value="head"><label for="head"> *) 3D head (Lee Perry-Smith)</label> (<a href="http://www.ir-ltd.net/infinite-3d-head-scan-released">Creative Commons Attribution 3.0 Unported License</a>)</option>-->
+
+                        <button class='radio' id="cube" value="cube" title="Cube between (-.5,-.5,-.5) and (.5,..5,.5)" style="background-image: url('images/cube.png');background-position-x: 5px;background-position-y: 5px;background-position: 5px 5px; width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                        <button class='radio' id="sphere" value="sphere" title="UV Sphere with center in (0,0,0) and radius is 1.0." style="background-image: url('images/sphere.png');background-position-x: 5px;background-position-y: 5px;background-position: 5px 5px; width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                        <button class='radio' id="plane" value="plane" title="Plane where Z=0. From (-1,-1) to (1,1)" style="background-image: url('images/plane.png');background-position-x: 5px;background-position-y: 5px; background-position: 5px 5px;width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                        <button class='radio' id="teapot" value="teapot" title="Teapot" style="background-image: url('images/teapot.png');background-position-x: 5px;background-position-y: 5px;background-position: 5px 5px; width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                        <button class='radio' id="head" value="head" title="3D head (Lee Perry-Smith)" style="background-image: url('images/head.png');background-position-x: 5px;background-position-y: 5px;background-position: 5px 5px; width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                        <button class='radio' id="points" value="points" title="Random points (inside the unit cube)" style="background-image: url('images/points.png');background-position-x: 5px;background-position-y: 5px;background-position: 5px 5px; width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                    </div>
+
+                    <h3>Camera</h3>
+                    <div id="projection">
+                        <button class='radio' id="perspective" value="perspective" title="Perspective camera. Camera positioned at [0,0,2]. FOV: 60. Near: 0.1. Far 10.0." style="background-image: url('images/perspective.png');background-position-x: 5px;background-position-y: 5px;background-position: 5px 5px;width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                        <button class='radio' id="orthogonale" value="orthogonale" title="Orthogonal camera. Camera positioned at [0,0,2]. Near: -1.0. Far: 1.0." style="background-image: url('images/orthogonal.png');background-position-x: 5px;background-position-y: 5px;background-position: 5px 5px;width: 42px;height: 42px;background-repeat: no-repeat;"></button>
+                    </div>
+                    <h3>Mesh movement</h3>
+                    <div id="rotatemesh">
+                        <button class='radio' id="rotateOn" value="on" title="Rotates the model (model-matrix) around the origin around the Y axis">Rotation</button>
+                        <button class='radio' id="rotateOff" value="off" title="No rotation. Model matrix is identity matrix.">Static</button>
+                    </div>
+                    <h3>Blending</h3>
+                    <div id="blending">
+                        <button class='radio' id="blendingOff" value="off">Off</button>
+                        <button class='radio' id="blendingOn" value="on">On</button>
+                    </div>
+                    <div id="blendingoptions" style="margin-left: 20px;">
+                        <b>Blend options</b><br>
+                        <div style="margin-left: 20px;">
+                        <table>
+                            <tr>
+                                <th>Source factor RGB</th>
+                                <th>Source factor Alpha</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="blendSFactorRGB">
+                                        <option>GL_ZERO</option>
+                                        <option>GL_ONE</option>
+                                        <option>GL_SRC_COLOR</option>
+                                        <option>GL_ONE_MINUS_SRC_COLOR</option>
+                                        <option>GL_DST_COLOR</option>
+                                        <option>GL_ONE_MINUS_DST_COLOR</option>
+                                        <option>GL_SRC_ALPHA</option>
+                                        <option>GL_ONE_MINUS_SRC_ALPHA</option>
+                                        <option>GL_DST_ALPHA</option>
+                                        <option>GL_ONE_MINUS_DST_ALPHA</option>
+                                        <option>GL_CONSTANT_COLOR</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_COLOR</option>
+                                        <option>GL_CONSTANT_ALPHA</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_ALPHA</option>
+                                        <option>GL_SRC_ALPHA_SATURATE</option>
+                                    </select>
+                                </td>
+                                <td><select id="blendSFactorAlpha">
+                                        <option>GL_ZERO</option>
+                                        <option>GL_ONE</option>
+                                        <option>GL_SRC_COLOR</option>
+                                        <option>GL_ONE_MINUS_SRC_COLOR</option>
+                                        <option>GL_DST_COLOR</option>
+                                        <option>GL_ONE_MINUS_DST_COLOR</option>
+                                        <option>GL_SRC_ALPHA</option>
+                                        <option>GL_ONE_MINUS_SRC_ALPHA</option>
+                                        <option>GL_DST_ALPHA</option>
+                                        <option>GL_ONE_MINUS_DST_ALPHA</option>
+                                        <option>GL_CONSTANT_COLOR</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_COLOR</option>
+                                        <option>GL_CONSTANT_ALPHA</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_ALPHA</option>
+                                        <option>GL_SRC_ALPHA_SATURATE</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Destination factor RGB</th>
+                                <th>Destination factor Alpha</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="blendDFactorRGB">
+                                        <option>GL_ZERO</option>
+                                        <option>GL_ONE</option>
+                                        <option>GL_SRC_COLOR</option>
+                                        <option>GL_ONE_MINUS_SRC_COLOR</option>
+                                        <option>GL_DST_COLOR</option>
+                                        <option>GL_ONE_MINUS_DST_COLOR</option>
+                                        <option>GL_SRC_ALPHA</option>
+                                        <option>GL_ONE_MINUS_SRC_ALPHA</option>
+                                        <option>GL_DST_ALPHA</option>
+                                        <option>GL_ONE_MINUS_DST_ALPHA</option>
+                                        <option>GL_CONSTANT_COLOR</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_COLOR</option>
+                                        <option>GL_CONSTANT_ALPHA</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_ALPHA</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select id="blendDFactorAlpha">
+                                        <option>GL_ZERO</option>
+                                        <option>GL_ONE</option>
+                                        <option>GL_SRC_COLOR</option>
+                                        <option>GL_ONE_MINUS_SRC_COLOR</option>
+                                        <option>GL_DST_COLOR</option>
+                                        <option>GL_ONE_MINUS_DST_COLOR</option>
+                                        <option>GL_SRC_ALPHA</option>
+                                        <option>GL_ONE_MINUS_SRC_ALPHA</option>
+                                        <option>GL_DST_ALPHA</option>
+                                        <option>GL_ONE_MINUS_DST_ALPHA</option>
+                                        <option>GL_CONSTANT_COLOR</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_COLOR</option>
+                                        <option>GL_CONSTANT_ALPHA</option>
+                                        <option>GL_ONE_MINUS_CONSTANT_ALPHA</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                        <button id="normalBlend" class='yui3-button' title="Set source + destination factor to normal blending">Set normal blend</button>
+                        <button id="additiveBlend" class='yui3-button' title="Set source + destination factor to additive blending">Set additive blend</button>
+                        </div>
+                    </div>
+                    <h3>Face culling</h3>
+                    <div id="faceculling">
+                        <button class='radio' id="facecullingBack" value="GL_BACK">Back</button>
+                        <button class='radio' id="facecullingFront" value="GL_FRONT">Front</button>
+                        <button class='radio' id="facecullingNone" value="GL_NONE">None</button>
+                    </div>
+                    <h3>Z test</h3>
+                    <div id="zTest">
+                        <button class='radio' id="zTestLess" value="GL_LESS">Less</button>
+                        <button class='radio' id="zTestEqual" value="GL_EQUAL">Equal</button>
+                        <button class='radio' id="zTestLEqual" value="GL_LEQUAL">Less than equal</button>
+                        <button class='radio' id="zTestGreater" value="GL_GREATER">Greater</button>
+                        <button class='radio' id="zTestNotEqual" value="GL_NOTEQUAL">Not equal</button>
+                        <button class='radio' id="zTestGEqual" value="GL_GEQUAL">Greater than equal</button>
+                        <button class='radio' id="zTestAlways" value="GL_ALWAYS">Always</button>
+                        <button class='radio' id="zTestNever" value="GL_NEVER">Never</button>
+                    </div>
+                    <h3>Depth mask</h3>
+                    <div id="depthMask">
+                        <button class='radio' id="depthMaskEnabled" value="true" title="Enable write to depth buffer">Enabled</button>
+                        <button class='radio' id="depthMaskDisabled" value="false" title="Disable write to depth buffer">Disabled</button>
+                    </div>
+
+                    <h3>Directional Light</h3>
+                    Rotation (<b title="default pointing towards negative z">Euler</b>):<br>
+                    <div id="lightrot">
+                        <input type="number" id="light_rot_x" value="0" step=5>
+                        <input type="number" id="light_rot_y" value="0" step=5>
+                        <input type="number" id="light_rot_z" value="0" step=5><br>
+                    </div>
+                    Color:<br>
+                    <div id="lightcolor">
+                        <input type="number" id="light_col_r" value="1" step=0.1>
+                        <input type="number" id="light_col_g" value="1" step=0.1>
+                        <input type="number" id="light_col_b" value="1" step=0.1><br>
+                    </div>
+                    Intensity:<br>
+                    <input type="number" id="lightintensity" value="1" step=0.1>
+                    <h3>Ambient light (RGB)</h3>
+                    <div id="ambientLight">
+                        <input type="number" name="ambientLight_r" value="0.1" step=0.1>
+                        <input type="number" name="ambientLight_g" value="0.1" step=0.1>
+                        <input type="number" name="ambientLight_b" value="0.1" step=0.1><br>
+                    </div>
+                    <br/>
+                    *) 3D head (<a href="http://www.ir-ltd.net/infinite-3d-head-scan-released">Lee Perry-Smith</a>)</label> (<a href="http://www.ir-ltd.net/infinite-3d-head-scan-released">Creative Commons Attribution 3.0 Unported License</a>)
+                </div>
+                <div id="about"  class="sourceEditorPanel">
+                    Shader name:<br>
+                    <input id="shadername" maxlength="75"><br>
+                    About:<br>
+                    <textarea id="shaderAbout" style="width:500px;height:200px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="glslEditorPanel">
+        <div id="glslEditor"></div>
+    </div>
+</div>
+</div>
+<footer id="kickjs-footer">
+</footer>
+<div id="panelContent"></div>
+<div id="nestedPanel"></div>
+<!-- todo - add documentation -->
+<div style="display: none;">
+    <div id="glslEditorInfo">
+                <h3>Predefined attributes</h3>
+                vec3 vertex: Vertex position in local space<br>
+                vec4 color: Color information (if available)<br>
+                vec2 uv1: Texture UV mapping 1<br>
+                vec2 uv2: Texture UV mapping 2<br>
+                vec3 normal: Vertex normals<br>
+                vec4 tangent: Tangent (currently broken)<br>
+                <h3>Predefined uniforms</h3>
+                mat4 _mvProj: Model view projection matrix<br>
+                mat4 _mv: Model view matrix<br>
+                mat3 _norm: Normal matrix<br>
+                mat4 _proj: Projection matrix<br>
+                float _time: total time<br>
+                vec3 _ambient: Ambient light<br>
+                vec3 _dLight.lDir: Directional light direction<br>
+                vec3 _dLight.colInt: Color intensity<br>
+                vec3 _dLight.halfV: half vector<br>
+                #pragma include "filename": Include of predefined file
+                <div style="background-color: #d3d3d3;">
+                    <h4>light.glsl</h4>
+                    <div>
+                        void getDirectionalLight(vec3 normal, mat3 dLight, float specularExponent, out vec3 diffuse, out float specular);<br>
+                        uniform mat3 _dLight;<br>
+                        uniform vec3 _ambient;
+                    </div>
+                </div>
+            </div>
+</div>
+<script type="text/javascript" src="/header.js"></script>
+<script data-main="js/shader_editor.js" type="text/javascript" src="../../dependencies/require.js"></script>
+<script src="http://cdn.jsdelivr.net/ace/1.1.3/min/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://cdn.jsdelivr.net/ace/1.1.3/min/mode-glsl.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://cdn.jsdelivr.net/ace/1.1.3/min/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+<!--<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>-->
+<!--<script src="ace/mode-glsl.js" type="text/javascript" charset="utf-8"></script>-->
+<!--<script src="ace/theme-twilight.js" type="text/javascript" charset="utf-8"></script>-->
+</body>
+</html>

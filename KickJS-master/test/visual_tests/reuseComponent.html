@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Reuse component</title>
+</head>
+<body>
+<a href="rotating_camera.html">Next</a><br>
+<h1>Reuse component</h1>
+This test ensured that components can be reused after removed from a game object.<br>
+<canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
+<script src="../../dependencies/require.js"></script>
+<script type="text/javascript">
+    var req = require.config({
+        baseUrl: 'js/lib',
+        paths: {
+            kick: '../../../../src/js/kick'
+        }
+    });
+
+    req(['kick'],
+            function (KICK) {
+    // init engine (create 3d context)
+    var engine = new KICK.core.Engine('canvas');
+
+    // create a game object in [0,0,0] facing down the -z axis
+    var cameraObject = engine.activeScene.createGameObject();
+    cameraObject.transform.position = [0,0,5];
+    // create a perspective camera
+    var camera = new KICK.scene.Camera({
+        perspective: false,
+        left:-5,
+        right:5,
+        top:5,
+        bottom:-5
+    });
+    cameraObject.addComponent(camera);
+
+    // create material
+    var shader = engine.project.load(engine.project.ENGINE_SHADER_UNLIT);
+    var material = new KICK.material.Material({
+        shader: shader,
+        uniformData:{
+            mainColor: [1,1,1,1]
+        }
+    });
+
+    function scheduleRemoveAndAdd(component, time){
+        var gameObject;
+        engine.eventQueue.add(function(){
+            gameObject = component.gameObject;
+            gameObject.removeComponent(component);
+        },time);
+        engine.eventQueue.add(function(){
+            gameObject.addComponent(component);
+        },time+500);
+    }
+
+
+    // create meshes
+    var meshes = [engine.project.ENGINE_MESH_TRIANGLE, engine.project.ENGINE_MESH_CUBE];
+    for (var i=0;i<meshes.length;i++){
+        var gameObject = engine.activeScene.createGameObject();
+        gameObject.transform.position = [-2.0+4*i,0,0];
+        var meshRenderer = new KICK.scene.MeshRenderer();
+        scheduleRemoveAndAdd(meshRenderer, 2000+i*1000);
+        meshRenderer.mesh = engine.project.load(meshes[i]);
+        meshRenderer.material = material;
+        gameObject.addComponent(meshRenderer);
+
+    }
+
+            });
+</script>
+</body>
+</html>
