@@ -1,0 +1,180 @@
+<!-- This is the homepage -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="elements/scripts/blotter.min.js"></script>
+<script src="elements/scripts/channelSplitMaterial.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<title>
+RetroPlayr
+</title>
+    
+ <style>
+.header { grid-area: header; }
+.item2 { grid-area: menu; }
+.item3 { grid-area: main; }
+.item5 { grid-area: footer; }
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    'header header header header header header header header'
+    'menu main main main main main main main'
+    'menu main main main main main main main'
+    'footer footer footer footer footer footer footer footer';
+  grid-gap: 10px;
+  background-color: #2196F3;
+  padding: 10px;
+}
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
+</style>
+
+
+    
+</head>
+<body>
+    
+  <div class="grid-container">
+  <div class="header">Header
+      
+      
+      <form action="http://www.example.com/login.php" class="navbaralign">
+			<p>Username:
+				<input type="text" name="username" size="15" maxlength="30" />
+			</p>
+			<p>Password:
+				<input type="password" name="password" size="15" maxlength="30" />
+			</p>
+		</form>
+      
+      
+      <img src="elements/logo%20pixelated.png" style="width: 230px; height: 27px;" alt="Image here"><a class="active" href="#index"></a>
+
+      
+      <form action="http://www.example.org/search.php">
+			<p>Search:</p>
+			<input type="search" name="search" />
+			<input type="submit" value="Search" />
+		</form>
+  
+      <a href="#index">Home</a>
+<a href="#video">Videos</a>
+  <a href="#about">About</a>
+  <a href="#contact">Contact</a>
+      
+  </div>
+  <div class="item2">
+      
+     <table border="2" bgcolor="#efefef">
+			<tr>
+				<th width="400"></th>
+				
+			</tr>
+			<tr>
+				<th>Account</th>
+				
+			</tr>
+			<tr>
+				<th>Subscriptions</th>
+				
+			</tr>
+			<tr>
+				<th>History</th>
+				
+			</tr>
+			<tr>
+				<th>Watch Later</th>
+				
+			</tr>
+         <tr>
+				<th>Liked Videos</th>
+				
+			</tr>
+    
+        </table>
+      
+  </div>
+  <div class="item3">Main
+      <!-- canvas so needs to overlay -->
+        <script>
+      var text = new Blotter.Text("comments", {
+        family : "serif",
+        size : 30,
+        fill : "#171717"
+        
+      });
+
+      var material = new Blotter.ChannelSplitMaterial();
+
+      var blotter = new Blotter(material, { texts : text });
+
+      var scope = blotter.forText(text);
+
+      scope.appendTo(document.body);
+        
+    </script>
+      
+      <video poster="images/puppy.jpg" width="160" height="90" preload controls loop>
+			<source src="video/puppy.mp4" type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
+			<source src="video/puppy.webm" type='video/webm;codecs="vp8, vorbis"' />
+			<p>A video of a puppy playing in the snow</p>
+		</video>
+      
+      <video poster="images/puppy.jpg" width="160" height="90" preload controls loop>
+			<source src="video/puppy.mp4" type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
+			<source src="video/puppy.webm" type='video/webm;codecs="vp8, vorbis"' />
+			<p>A video of a puppy playing in the snow</p>
+		</video>
+      
+      <video poster="images/puppy.jpg" width="160" height="90" preload controls loop>
+			<source src="video/puppy.mp4" type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
+			<source src="video/puppy.webm" type='video/webm;codecs="vp8, vorbis"' />
+			<p>A video of a puppy playing in the snow</p>
+		</video>
+      
+      <video poster="images/puppy.jpg" width="160" height="90" preload controls loop>
+			<source src="video/puppy.mp4" type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
+			<source src="video/puppy.webm" type='video/webm;codecs="vp8, vorbis"' />
+			<p>A video of a puppy playing in the snow</p>
+		</video>
+      
+     
+   
+      
+      
+       <form action="http://www.example.com/comments.php">
+			<p>Comment Section</p>
+			<textarea name="comments" cols="20" rows="4">Enter your comments...</textarea>
+		</form>
+    
+    
+      
+      </div>  
+  <div class="item5" style="align-content: center">
+     <a href="#">Sponsors</a> 
+     <a href="#">Donate</a> 
+     <a href="#">Credits</a> 
+     <a href="#">Contact</a> 
+      Footer</div>
+</div>  
+    
+    
+<span class ='navbar'>
+
+
+	   
+</span>
+ 
+  
+
+</body>
+
+</html>

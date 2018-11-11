@@ -1,0 +1,61 @@
+/* make text times new roman?*/
+
+
+
+ul {
+    list-style-type: none;
+    display: inline;
+}
+
+
+.item2 {
+width: 100%;
+}
+
+.navbar{
+    padding-left: 50px
+    background-color: lightgray;
+}
+
+
+.table {
+  align-self: center;
+}
+
+form {
+    
+
+}
+
+
+div {
+    resize: both;
+    overflow: auto;
+}
+
+
+.grid-container{
+    
+    
+    
+}
+
+
+.header{
+    align-self: auto;
+    display: inline-flex;
+    justify-content: space-between;
+}
+
+
+
+
+#stack{
+    
+    display: inline-block;
+}
+
+.table{
+    
+    max-width: 100%;
+}
