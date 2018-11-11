@@ -14,7 +14,7 @@
 <title>
 RetroPlayr
 </title>
-    
+
  <style>
 .header { grid-area: header; }
 .item2 { grid-area: menu; }
@@ -32,8 +32,8 @@ RetroPlayr
   background-color: #FF0000;
   padding: 10px;
 }
-     
-     
+
+
 
 .grid-container > div {
   background-color: rgba(255, 255, 255, 1.0);
@@ -44,7 +44,7 @@ RetroPlayr
 </style>
 
 
-    
+
 </head>
 <body>
   <img id="ad1" src="elements/ads/ad1.gif">
@@ -53,17 +53,17 @@ RetroPlayr
   <img id="ad4" src="elements/ads/ad4.gif">
   <div class="grid-container">
   <div class="header">
-      
+
         <div id="stack">
       <img src="elements/logo%20pixelated.png" style="width: 230px; height: 27px; " alt="Image here"><a class="active" href="#index"></a>
       </div>
-      
+
            <a href="#index">Home</a>
 <a href="#video">Videos</a>
   <a href="#about">About</a>
   <a href="#contact">Contact</a>
-      
-      
+
+
       <div class="login-container">
     <form action="/action_page.php">
       <input type="text" placeholder="Username" name="username">
@@ -71,43 +71,43 @@ RetroPlayr
       <button type="submit">Login</button>
     </form>
   </div>
-      
-      
+
+
       <form action="http://www.example.org/search.php">
 			<input type="search" name="search" />
 			<input type="submit" value="Search" />
 		</form>
-  
- 
+
+
   </div>
   <div class="item2">
-      
+
      <table bgcolor="#efefef" >
-			
+
 			<tr>
 				<th>Account</th>
-				
+
 			</tr>
 			<tr>
 				<th>Subscriptions</th>
-				
+
 			</tr>
 			<tr>
 				<th>History</th>
-				
+
 			</tr>
 			<tr>
 				<th>Watch Later</th>
-				
+
 			</tr>
          <tr>
 				<th>Liked Videos</th>
-				
+
 			</tr>
-    
+
         </table>
            <div class="loader"></div>
-      
+
   </div>
   <div class="item3">
       <!-- canvas so needs to overlay -->
@@ -116,7 +116,7 @@ RetroPlayr
         family : "serif",
         size : 30,
         fill : "#171717"
-        
+
       });
 
       var material = new Blotter.ChannelSplitMaterial();
@@ -126,20 +126,20 @@ RetroPlayr
       var scope = blotter.forText(text);
 
       scope.appendTo(document.body);
-        
+
     </script>
-      
+
      <div id="media playback" style="border: 2px; border-color: blueviolet;" onclick="bluescreenon()">
-        
+
        <div id='media-player'>
-          <iframe src="KickJS-master/example/video_ascii_art/Video_Ascii_Art.html"  width='640px' height='480px' ></iframe> 
+          <iframe src="KickJS-master/example/video_ascii_art/Video_Ascii_Art.html"  width='640' height='480' ></iframe>
          <!--<video id='media-video' controls>
             <source src='elements/videos/mario%20plumber%20song.mp4' type='video/mp4'>
          </video>-->
          <div id='media-controls'></div>
       </div>
-      
-      
+
+
       <div id='media-controls'>
    <button id='play-pause-button' class='play' title='play'
 onclick='togglePlayPause();'>Play</button>
@@ -149,7 +149,7 @@ onclick='togglePlayPause();'>Play</button>
 <button id='mute-button' class='mute' title='mute' onclick='toggleMute();'>Mute</button>
 <button id='replay-button' class='replay' title='replay' onclick='replayMedia();'>Replay</button>
       </div>
-      
+
       <div id='media-play-list'>
 <h2>Playlist</h2>
 <ul id='play-list'>
@@ -163,19 +163,19 @@ onclick='togglePlayPause();'>Play</button>
 <span class='play-item' onclick='loadVideo("grass.webm", "grass.mp4");'>Grass</span>
 </li>
 </ul>
-        
+
       </div>
-      
+
     </div>
-    
-      
+
+
 <div id="overlay">
-      
+
  <div id="bluescreentext">
      A problem has been detected and Windows has been shut down to prevent damage to your computer.
      <br>
      <p></p>
-     
+
 
 If this is the first time you've seen this stop error screen, restart your computer. if this screen appears again, follow these steps:
      <br>
@@ -198,40 +198,40 @@ Technical information:
      <p></p>
 
 
-    
-    
-    
-</div>      
-      
-      
+
+
+
 </div>
 
-      
-      
-      
-      
-      </div>  
-  <div class="item5" style="align-content: center">
-     <a href="#">Sponsors</a> 
-     <a href="#">Donate</a> 
-     <a href="#">Credits</a> 
-     <a href="#">Contact</a> 
+
+</div>
+
+
+
+
+
       </div>
-</div>  
-    
-    
+  <div class="item5" style="align-content: center">
+     <a href="#">Sponsors</a>
+     <a href="#">Donate</a>
+     <a href="#">Credits</a>
+     <a href="#">Contact</a>
+      </div>
+</div>
+
+
 <span class ='navbar'>
 
 
-	   
+
 </span>
- 
-  
+
+
 <script src='elements/scripts/media-player.js'></script>
 
-    
+
 <script>
-    
+
  document.onkeydown = function(evt) {
     evt = evt || window.event;
     if (evt.keyCode == 27) {
@@ -278,8 +278,8 @@ Technical information:
     }
 
 </script>
-      
-    
+
+
 </body>
 
 </html>
