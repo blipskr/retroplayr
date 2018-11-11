@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() { initialiseMediaPlayer
 var mediaPlayer;
 function initialiseMediaPlayer() {
     mediaPlayer = document.getElementById('media-video');
-    mediaPlayer.controls = true;
+    mediaPlayer.controls = false;
 }
 
 function togglePlayPause() {
